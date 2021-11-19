@@ -13,9 +13,16 @@
 
                     <table class="table table-striped">
                         @if($company->logo)
+                        @php 
+                            if(str_contains($company->logo, 'storage')) {
+                                $logo = url('laravel/public' . $company->logo);
+                            } else {
+                                $logo = url($company->logo);
+                            }
+                        @endphp
                             <tr>
                                 <th>{{ __('Logo') }}</th>
-                                <td><img src="{{ url($company->logo) }}" class="logo" alt=""></td>
+                                <td><img src="{{ url($logo) }}" class="logo" alt=""></td>
                             </tr>
                         @endif
                         <tr>

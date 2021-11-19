@@ -65,3 +65,33 @@
     </div>
 </div>
 @endsection
+
+@section('scripts')
+
+    <script>
+
+        $(document).ready(function(){
+            
+            $('[data-toggle="tooltip"]').tooltip(); 
+
+            var Language = $('html').attr('lang');
+
+            if(Language == 'lt') {
+                $('.table').DataTable({
+                    "language": {
+                        "url" : "//cdn.datatables.net/plug-ins/1.11.3/i18n/lt.json"
+                    }
+                });
+            } else {
+                $('.table').DataTable({
+                    "language": {
+                        "url" : "//cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json"
+                    }
+                });
+            }
+
+        });
+
+    </script>
+
+@endsection

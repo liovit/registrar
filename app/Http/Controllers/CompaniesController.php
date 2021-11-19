@@ -194,8 +194,8 @@ class CompaniesController extends Controller
 
             } else {
 
-                if($locale == 'en') return redirect('/companies')->with('status', 'This company still has workers, un-assign them in order to delete the company.');
-                if($locale == 'lt') return redirect('/companies')->with('status', 'Ši įmonė vis dar turi darbuotojų, prašome pašalinti juos jei norite ištrinti įmonę.');
+                if($locale == 'en') return redirect()->route('companies.index')->with('status', 'This company still has workers, un-assign them in order to delete the company.');
+                if($locale == 'lt') return redirect()->route('companies.index')->with('status', 'Ši įmonė vis dar turi darbuotojų, prašome pašalinti juos jei norite ištrinti įmonę.');
 
             }
 

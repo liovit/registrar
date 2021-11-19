@@ -34,5 +34,9 @@ Route::get('/companies/{company}/delete', [App\Http\Controllers\CompaniesControl
 Route::resource('workers', 'App\Http\Controllers\WorkersController');
 Route::get('/workers/{worker}/delete', [App\Http\Controllers\WorkersController::class, 'delete'])->name('workers.delete');
 
+// Route::get('/linkstorage', function() {
+//     Artisan::call('storage:link');
+// });
+
 // language change route
 Route::get('/changelang', [LanguageController::class, 'changeLanguage'])->name('changelang');

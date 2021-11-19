@@ -7,7 +7,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header"><span>{{ __('Workers') }}</span> <a href="{{ route('workers.create') }}" class="float-right">Pridėti naują darbuotoją</a></div>
+                <div class="card-header"><span>{{ __('Workers') }}</span> <a href="{{ route('workers.create') }}" class="float-right">{{ __('Add new worker') }}</a></div>
 
                 <div class="card-body">
 

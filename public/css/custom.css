@@ -1,0 +1,18 @@
+.logo {
+    max-height: 200px;
+}
+
+.language-image {
+    max-height: 20px;
+}
+
+.delete-text {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+@media (min-width: 768px) {
+    .language-image {
+        margin-top: 8px;
+    }
+}

@@ -27,6 +27,9 @@
 
 </head>
 <body>
+    @php
+        if(!session()->has('locale')) { session()->put('locale', 'lt'); }
+    @endphp
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">

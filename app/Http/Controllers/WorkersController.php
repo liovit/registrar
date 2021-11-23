@@ -93,7 +93,7 @@ class WorkersController extends Controller
      */
     public function create()
     {
-        $companies = Company::orderBy('name')->pluck('name', 'id');
+        $companies = Company::orderBy('title')->pluck('title', 'id');
         return view('workers/create', compact('companies'));
     }
 
@@ -139,7 +139,7 @@ class WorkersController extends Controller
     public function edit($id)
     {
 
-        $companies = Company::all();
+        $companies = Company::orderBy('title')->pluck('title', 'id');
         $worker = Worker::find($id);
 
         if($worker) {

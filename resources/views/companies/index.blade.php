@@ -13,14 +13,15 @@
 
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
+                            @php $session = session('status'); @endphp
+                            {{ __($session) }}
                         </div>
                     @endif
 
-                    @if (count($companies) <= 0)
+                    {{-- @if ($totalRecords <= 0)
                         {{ __('Hello, please create your first ') }} <a href="{{ route('companies.create') }}">{{ __('company') }}</a> {{ __(' in order to start controlling registrar') }}.
 
-                    @else
+                    @else --}}
                     <div class="col-12" style="overflow-x: scroll !important;">
                         <table class="table text-center">
                             <thead>
@@ -34,30 +35,24 @@
                                 </tr>
                             </thead>
                             <tbody class="text-center">
-                                @foreach($companies as $company)
+                                {{-- @foreach($companies as $company) --}}
                                 <tr>
-                                    <td>{{ $company->id }}</td>
-                                    <td>{{ $company->title }}</td>
-                                    <td>{{ $company->email }}</td>
-                                    <td><a href="{{ $company->web_url }}">{{ $company->web_url }}</a></td>
-                                    <td>{{ \Carbon\Carbon::parse($company->created_at)->format('d/m/Y') }}</td>
-                                    <td>
-                                        @if($locale == 'en')
-                                            <a href="{{ route('companies.show', ['company' => $company->id]) }}" data-toggle="tooltip" data-placement="top" title="View"><i class="fa fa-external-link-square" aria-hidden="true" style="font-size:20px;"></i></a>
-                                            <a href="{{ route('companies.edit', ['company' => $company->id]) }}" data-toggle="tooltip" data-placement="top" title="Edit"><i class="fa fa-pencil-square" aria-hidden="true" style="font-size:20px;"></i></a>
-                                            <a href="{{ route('companies.delete', ['company' => $company->id]) }}" data-toggle="tooltip" data-placement="top" title="Delete"><i class="fa fa-minus-square" aria-hidden="true" style="font-size:20px;"></i></a>
-                                        @else
-                                            <a href="{{ route('companies.show', ['company' => $company->id]) }}" data-toggle="tooltip" data-placement="top" title="Peržiūrėti"><i class="fa fa-external-link-square" aria-hidden="true" style="font-size:20px;"></i></a>
-                                            <a href="{{ route('companies.edit', ['company' => $company->id]) }}" data-toggle="tooltip" data-placement="top" title="Koreguoti"><i class="fa fa-pencil-square" aria-hidden="true" style="font-size:20px;"></i></a>
-                                            <a href="{{ route('companies.delete', ['company' => $company->id]) }}" data-toggle="tooltip" data-placement="top" title="Ištrinti"><i class="fa fa-minus-square" aria-hidden="true" style="font-size:20px;"></i></a>
-                                        @endif
-                                    </td>
+                                    <td>id</td>
+                                    <td>title</td>
+                                    <td>email</td>
+                                    <td><a href="#">weburl</a></td>
+                                    <td>date</td>
+                                    {{-- <td> --}}
+                                        {{-- <a href="{{ route('companies.show', ['company' => $company->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('View') }}"><i class="fa fa-external-link-square" aria-hidden="true" style="font-size:20px;"></i></a>
+                                        <a href="{{ route('companies.edit', ['company' => $company->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('Edit') }}"><i class="fa fa-pencil-square" aria-hidden="true" style="font-size:20px;"></i></a>
+                                        <a href="{{ route('companies.delete', ['company' => $company->id]) }}" data-toggle="tooltip" data-placement="top" title="{{ __('Delete') }}"><i class="fa fa-minus-square" aria-hidden="true" style="font-size:20px;"></i></a> --}}
+                                    {{-- </td> --}}
                                 </tr>
-                                @endforeach
+                                {{-- @endforeach --}}
                             </tbody>
                         </table>
                     </div>
-                    @endif
+                    {{-- @endif --}}
 
                 </div>
             </div>
@@ -71,24 +66,88 @@
     <script>
 
         $(document).ready(function(){
-            
-            $('[data-toggle="tooltip"]').tooltip(); 
 
             var Language = $('html').attr('lang');
 
             if(Language == 'lt') {
-                $('.table').DataTable({
+                var table = $('.table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: "{{ route('companies.getcompanies') }}",
+                    columns: [
+                        {data: 'id'},
+                        {data: 'title'},
+                        {data: 'email'},
+                        {
+                            render: function( data, type, row, meta ) {
+                                return '<a href="'+row.web_url+'">'+row.web_url+'</a>';
+                            }
+                        },
+                        {data: 'date'},
+                        {
+                            defaultContent: 
+                            "<a href='#' class='view' data-toggle='tooltip' data-placement='top' title='{{ __('View') }}'><i class='fa fa-external-link-square' aria-hidden='true' style='font-size:20px;'></i></a>\
+                             <a href='#' class='edit' data-toggle='tooltip' data-placement='top' title='{{ __('Edit') }}'><i class='fa fa-pencil-square' aria-hidden='true' style='font-size:20px;'></i></a>\
+                             <a href='#' class='delete' data-toggle='tooltip' data-placement='top' title='{{ __('Delete') }}'><i class='fa fa-minus-square' aria-hidden='true' style='font-size:20px;'></i></a>"
+                        },
+                    ],
                     "language": {
                         "url" : "//cdn.datatables.net/plug-ins/1.11.3/i18n/lt.json"
                     }
                 });
             } else {
-                $('.table').DataTable({
+                var table = $('.table').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: "{{ route('companies.getcompanies') }}",
+                    columns: [
+                        {data: 'id'},
+                        {data: 'title'},
+                        {data: 'email'},
+                        {data: 'web_url'},
+                        {data: 'date'},
+                        {
+                            defaultContent: 
+                            "<a href='#' class='view' data-toggle='tooltip' data-placement='top' title='{{ __('View') }}'><i class='fa fa-external-link-square' aria-hidden='true' style='font-size:20px;'></i></a>\
+                             <a href='#' class='edit' data-toggle='tooltip' data-placement='top' title='{{ __('Edit') }}'><i class='fa fa-pencil-square' aria-hidden='true' style='font-size:20px;'></i></a>\
+                             <a href='#' class='delete' data-toggle='tooltip' data-placement='top' title='{{ __('Delete') }}'><i class='fa fa-minus-square' aria-hidden='true' style='font-size:20px;'></i></a>"
+                        },
+                    ],
                     "language": {
                         "url" : "//cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json"
                     }
                 });
             }
+
+            $('.table tbody').on('click', '.view', function() {
+
+                var row = $(this).closest('tr');
+                var data = table.row(row).data().id;
+                var url = "{{ route('companies.show', ':id') }}";
+                url = url.replace(':id', data);
+                window.location.href = url;
+                    
+            });
+
+            $('.table tbody').on('click', '.edit', function() {
+
+                var row = $(this).closest('tr');
+                var data = table.row(row).data().id;
+                var url = "{{ route('companies.edit', ':id') }}";
+                url = url.replace(':id', data);
+                window.location.href = url;
+
+            });
+
+            $('.table tbody').on('click', '.delete', function() {
+
+                var row = $(this).closest('tr');
+                var data = table.row(row).data().id;
+                var url = "{{ route('companies.delete', ':id') }}";
+                url = url.replace(':id', data);
+                window.location.href = url;
+
+            });
 
         });
 

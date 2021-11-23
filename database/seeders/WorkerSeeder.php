@@ -14,6 +14,6 @@ class WorkerSeeder extends Seeder
      */
     public function run()
     {
-        $workers = Worker::factory()->count(100)->create();
+        $workers = Worker::factory()->count(25000)->create();
     }
 }

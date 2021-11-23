@@ -19,7 +19,7 @@ class WorkersController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('locale');
     }
 
     /**
@@ -29,9 +29,61 @@ class WorkersController extends Controller
      */
     public function index()
     {
-        $workers = Worker::all();
-        $locale = $this->getUserLocale();
-        return view('workers/index', compact('workers', 'locale')); 
+        return view('workers/index');
+    }
+
+    public function getWorkers(Request $request){
+   
+        $columnNameArray    = $request->get('columns');
+        $orderArray         = $request->get('order');
+        $searchValue        = $request->search['value'];
+   
+        $columnIndex        = $orderArray[0]['column']; // column index
+        $columnName         = $columnNameArray[$columnIndex]['data']; // column name
+        $columnSortOrder    = $orderArray[0]['dir']; // asc or desc
+   
+        // total records
+        $totalRecords         = Worker::select('count(*) as allcount')->count();
+        $totalFilteredRecords = Worker::select('count(*) as allcount')->where('name', 'like', '%' . $searchValue . '%')->count();
+   
+        // fetch records
+        $workers = Worker::orderBy($columnName, $columnSortOrder)
+            ->where('workers.name', 'like', '%' . $searchValue . '%')
+            ->select('workers.*')
+            ->skip($request->start)
+            ->take($request->length)
+            ->get();
+   
+        $dataArray = [];
+        
+        foreach($workers as $w) {
+
+           $id      = $w->id;
+           $name    = $w->name;
+           $email   = $w->email;
+           $phone   = $w->phone;
+           $company = $w->company->title;
+           $rrdate  = \Carbon\Carbon::parse($w->created_at)->format('d/m/Y');
+   
+           $dataArray[] = array(
+                "id"        => $id,
+                "name"      => $name,
+                "email"     => $email,
+                "phone"     => $phone,
+                "company"   => $company,
+                "date"      => $rrdate,
+           );
+        }
+   
+        $response = array(
+           "draw" => intval($request->draw),
+           "iTotalRecords" => $totalRecords,
+           "iTotalDisplayRecords" => $totalFilteredRecords,
+           "aaData" => $dataArray
+        );
+   
+        return json_encode($response);
+
     }
 
     /**
@@ -41,7 +93,7 @@ class WorkersController extends Controller
      */
     public function create()
     {
-        $companies = Company::all();
+        $companies = Company::orderBy('name')->pluck('name', 'id');
         return view('workers/create', compact('companies'));
     }
 
@@ -54,12 +106,8 @@ class WorkersController extends Controller
     public function store(WorkersRequest $request)
     {
 
-        $locale = $this->getUserLocale();
-
         Worker::create($request->all());
-
-        if($locale == 'en') return redirect()->route('workers.index')->with('status', 'Successfully added new worker.');
-        if($locale == 'lt') return redirect()->route('workers.index')->with('status', 'Sėkmingai pridėtas naujas darbuotojas.');
+        return redirect()->route('workers.index')->with('status', 'Successfully added new worker.');
 
     }
 
@@ -113,7 +161,6 @@ class WorkersController extends Controller
     {
 
         $worker = Worker::find($id);
-        $locale = $this->getUserLocale();
 
         if($worker) {
 
@@ -121,8 +168,7 @@ class WorkersController extends Controller
 
         } else { return redirect()->back(); }
 
-        if($locale == 'en') return redirect()->back()->with('status', 'Successfully updated worker information.');
-        if($locale == 'lt') return redirect()->back()->with('status', 'Sėkmingai atnaujinta darbuotojo informacija.');
+        return redirect()->back()->with('status', 'Successfully updated worker information.');
 
     }
 
@@ -155,14 +201,6 @@ class WorkersController extends Controller
         } else {
             return redirect()->back();
         }
-
-    }
-
-    // get user local language
-    public function getUserLocale() {
-
-        $locale = Session::get('locale');
-        return $locale;
 
     }
 

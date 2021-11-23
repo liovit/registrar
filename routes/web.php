@@ -23,16 +23,24 @@ Auth::routes(['register' => false]);
 // register route redirects back
 Route::get('/register', function() { return redirect()->back(); });
 
-// dashboard routes
-Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::middleware(['auth'])->group( function() {
 
-// dashboard companies routes
-Route::resource('companies', 'App\Http\Controllers\CompaniesController');
-Route::get('/companies/{company}/delete', [App\Http\Controllers\CompaniesController::class, 'delete'])->name('companies.delete');
+    // dashboard routes
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    
+    // ajax routes
+    Route::get('/workers/get-list', [App\Http\Controllers\WorkersController::class, 'getWorkers'])->name('workers.getworkers');
+    Route::get('/companies/get-list', [App\Http\Controllers\CompaniesController::class, 'getCompanies'])->name('companies.getcompanies');
 
-// dashboard workers routes
-Route::resource('workers', 'App\Http\Controllers\WorkersController');
-Route::get('/workers/{worker}/delete', [App\Http\Controllers\WorkersController::class, 'delete'])->name('workers.delete');
+    // dashboard companies routes
+    Route::resource('companies', 'App\Http\Controllers\CompaniesController');
+    Route::get('/companies/{company}/delete', [App\Http\Controllers\CompaniesController::class, 'delete'])->name('companies.delete');
+
+    // dashboard workers routes
+    Route::resource('workers', 'App\Http\Controllers\WorkersController');
+    Route::get('/workers/{worker}/delete', [App\Http\Controllers\WorkersController::class, 'delete'])->name('workers.delete');
+
+});
 
 // Route::get('/linkstorage', function() {
 //     Artisan::call('storage:link');

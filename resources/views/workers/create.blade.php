@@ -21,12 +21,6 @@
                         </div>
                     @endif
 
-                    @if (session('success'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
                     <form action="{{ route('workers.store') }}" method="post" enctype="multipart/form-data">
 
                         @csrf
@@ -47,9 +41,11 @@
                             <div class="col-12 mt-2">
                                 <label for="">{{ __('Company') }}</label>
                                 <select name="company_id" class="form-control" id="">
-                                        <option value="" selected disabled>{{ __('Choose company') }}</option>
-                                    @foreach($companies as $company)
-                                        <option value="{{ $company->id }}">{{ $company->title }}</option>
+                                    <option value="" selected disabled>{{ __('Choose company') }}</option>
+                                    @foreach($companies->chunk(10) as $ten)
+                                        @foreach($ten as $company)
+                                            <option value="{{ $company->id }}">{{ $company->title }}</option>
+                                        @endforeach
                                     @endforeach
                                 </select>
                             </div>

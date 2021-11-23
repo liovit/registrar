@@ -24,9 +24,10 @@ class CompaniesRequest extends FormRequest
     public function rules()
     {
         return [
-            "title" => "required",
-            "email" => "required|email",
-            "web_url" => "required|url",
+            "title" => "required|string|min:3|max:255",
+            "email" => "required|email|string|min:3|max:255",
+            "web_url" => "required|url|string|min:3|max:255",
+            "logo" => "min:3|max:255|file|mimes:jpeg,jpg,png,bmp"
         ];
     }
 

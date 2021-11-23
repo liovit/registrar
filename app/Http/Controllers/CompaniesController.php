@@ -18,7 +18,7 @@ class CompaniesController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('locale');
     }
 
     /**
@@ -28,9 +28,62 @@ class CompaniesController extends Controller
      */
     public function index()
     {
-        $companies = Company::all();
-        $locale = $this->getUserLocale();
-        return view('companies/index', compact('companies', 'locale'));
+        // $totalRecords = Company::count();
+        return view('companies/index');
+    }
+
+    // ajax
+    public function getCompanies(Request $request){
+   
+        // get values
+        $columnNameArray    = $request->get('columns');
+        $orderArray         = $request->get('order');
+        $searchValue        = $request->search['value'];
+   
+        $columnIndex        = $orderArray[0]['column']; // column index
+        $columnName         = $columnNameArray[$columnIndex]['data']; // column name
+        $columnSortOrder    = $orderArray[0]['dir']; // asc or desc
+   
+        // total records
+        $totalRecords         = Company::select('count(*) as allcount')->count();
+        $totalFilteredRecords = Company::select('count(*) as allcount')->where('title', 'like', '%' . $searchValue . '%')->count();
+   
+        // fetch records
+        $companies = Company::orderBy($columnName, $columnSortOrder)
+            ->where('companies.title', 'like', '%' . $searchValue . '%')
+            ->select('companies.*')
+            ->skip($request->start)
+            ->take($request->length)
+            ->get();
+   
+        $dataArray = [];
+        
+        foreach($companies as $w) {
+
+           $id      = $w->id;
+           $title   = $w->title;
+           $email   = $w->email;
+           $webUrl  = $w->web_url;
+           $rrdate  = \Carbon\Carbon::parse($w->created_at)->format('d/m/Y');
+   
+           $dataArray[] = [
+                "id"        => $id,
+                "title"     => $title,
+                "email"     => $email,
+                "web_url"   => $webUrl,
+                "date"      => $rrdate,
+           ];
+        }
+   
+        $response = array(
+           "draw" => intval($request->draw),
+           "iTotalRecords" => $totalRecords,
+           "iTotalDisplayRecords" => $totalFilteredRecords,
+           "aaData" => $dataArray
+        );
+   
+        return json_encode($response);
+
     }
 
     /**
@@ -52,8 +105,6 @@ class CompaniesController extends Controller
     public function store(CompaniesRequest $request)
     {
 
-        $locale = $this->getUserLocale();
-
         if($request->file('logo')) {
 
             $imagePath = $this->handleImageUpload($request->logo);
@@ -72,8 +123,7 @@ class CompaniesController extends Controller
         // $details = ['company' => $request->title];
         // \Mail::to($request->email)->send(new \App\Mail\RegisteredCompanyMail($details));
 
-        if($locale == 'en') return redirect()->route('companies.index')->with('status', 'Successfully created new company.');
-        if($locale == 'lt') return redirect()->route('companies.index')->with('status', 'Sėkmingai sukurta nauja įmonė.');
+        return redirect()->route('companies.index')->with('status', 'Successfully created new company.');
 
     }
 
@@ -125,7 +175,6 @@ class CompaniesController extends Controller
     {
 
         $company = Company::find($id);
-        $locale = $this->getUserLocale();
 
         if($company) {
 
@@ -147,8 +196,7 @@ class CompaniesController extends Controller
 
         } else { return redirect()->back(); }
 
-        if($locale == 'en') return redirect()->back()->with('status', 'Successfully updated company.');
-        if($locale == 'lt') return redirect()->back()->with('status', 'Sėkmingai atnaujinta įmonė.');
+        return redirect()->back()->with('status', 'Successfully updated company.');
 
     }
 
@@ -174,7 +222,6 @@ class CompaniesController extends Controller
     public function destroy($id)
     {
         
-        $locale = $this->getUserLocale();
         $company = Company::find($id);
 
         if($company) {
@@ -189,13 +236,11 @@ class CompaniesController extends Controller
     
                 $company->delete();
 
-                if($locale == 'en') return redirect()->route('companies.index')->with('status', 'The company was successfully deleted.');
-                if($locale == 'lt') return redirect()->route('companies.index')->with('status', 'Įmonė buvo sėkmingai ištrinta.');
+                return redirect()->route('companies.index')->with('status', 'The company was successfully deleted.');
 
             } else {
 
-                if($locale == 'en') return redirect()->route('companies.index')->with('status', 'This company still has workers, un-assign them in order to delete the company.');
-                if($locale == 'lt') return redirect()->route('companies.index')->with('status', 'Ši įmonė vis dar turi darbuotojų, prašome pašalinti juos jei norite ištrinti įmonę.');
+                return redirect()->route('companies.index')->with('status', 'This company still has workers, un-assign them in order to delete the company.');
 
             }
 
@@ -211,14 +256,6 @@ class CompaniesController extends Controller
         $imgPath = '/storage/' . $path;
 
         return $imgPath;
-
-    }
-
-    // get user local language
-    public function getUserLocale() {
-
-        $locale = Session::get('locale');
-        return $locale;
 
     }
 

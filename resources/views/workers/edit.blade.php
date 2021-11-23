@@ -23,7 +23,8 @@
 
                     @if (session('status'))
                         <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
+                            @php $session = session('status'); @endphp
+                            {{ __($session) }}
                         </div>
                     @endif
 
@@ -48,8 +49,10 @@
                             <div class="col-12 mt-2">
                                 <label for="">{{ __('Company') }}</label>
                                 <select name="company_id" class="form-control" id="">
-                                    @foreach($companies as $company)
-                                        <option value="{{ $company->id }}" @if($company->id == $worker->company->id) selected @endif>{{ $company->title }}</option>
+                                    @foreach($companies->chunk(10) as $ten)
+                                        @foreach($ten as $company)
+                                            <option value="{{ $company->id }}" @if($company->id == $worker->company->id) selected @endif>{{ $company->title }}</option>
+                                        @endforeach
                                     @endforeach
                                 </select>
                             </div>

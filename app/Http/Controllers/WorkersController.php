@@ -93,7 +93,14 @@ class WorkersController extends Controller
      */
     public function create()
     {
-        $companies = Company::orderBy('title')->pluck('title', 'id');
+        
+        $companies = Company::all()->map(function($item, $index) {
+            return [
+                "id" => $item['id'],
+                "title" => $item['title']
+            ];
+        });
+
         return view('workers/create', compact('companies'));
     }
 

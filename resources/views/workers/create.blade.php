@@ -44,7 +44,7 @@
                                     <option value="" selected disabled>{{ __('Choose company') }}</option>
                                     @foreach($companies->chunk(10) as $ten)
                                         @foreach($ten as $company)
-                                            <option value="{{ $company->id }}">{{ $company->title }}</option>
+                                            <option value="{{ $company['id'] }}">{{ $company['title'] }}</option>
                                         @endforeach
                                     @endforeach
                                 </select>

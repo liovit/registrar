@@ -51,7 +51,8 @@
                                 <select name="company_id" class="form-control" id="">
                                     @foreach($companies->chunk(10) as $ten)
                                         @foreach($ten as $company)
-                                            <option value="{{ $company->id }}" @if($company->id == $worker->company->id) selected @endif>{{ $company->title }}</option>
+                                            {{-- @php var_dump($company) @endphp --}}
+                                            <option value="{{ $company['id'] }}" @if($company['id'] == $worker->company->id) selected @endif>{{ $company['title'] }}</option>
                                         @endforeach
                                     @endforeach
                                 </select>

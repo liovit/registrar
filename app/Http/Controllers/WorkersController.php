@@ -139,7 +139,13 @@ class WorkersController extends Controller
     public function edit($id)
     {
 
-        $companies = Company::orderBy('title')->pluck('title', 'id');
+        $companies = Company::all()->map(function($item, $index) {
+            return [
+                "id" => $item['id'],
+                "title" => $item['title']
+            ];
+        });
+        
         $worker = Worker::find($id);
 
         if($worker) {

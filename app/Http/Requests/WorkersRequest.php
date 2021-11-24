@@ -24,8 +24,8 @@ class WorkersRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => "required",
-            "email" => "required|email",
+            "name" => "required|string|min:3|max:255",
+            "email" => "required|email|string|min:3|max:255",
             "phone" => "required|numeric|phone:LT",
             "company_id" => "required"
         ];

@@ -131,10 +131,17 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'name' => [
+            'required' => 'Vardo laukas yra privalomas.',
+            'min' => 'Vardo lauke minimalus kiekis simbolių yra 3.',
+            'max' => 'Vardo lauke maksimalus kiekis simbolių yra 255.',
+            'string' => 'Vardo laukas privalo būti tekstinis.',
+        ],
         'title' => [
             'required' => 'Pavadinimo laukas yra privalomas.',
             'min' => 'Pavadinimo lauke minimalus kiekis simbolių yra 3.',
             'max' => 'Pavadinimo lauke maksimalus kiekis simbolių yra 255.',
+            'string' => 'Pavadinimo laukas privalo būti tekstinis.',
         ],
         'email' => [
             'required' => 'El. pašto laukas yra privalomas.',
@@ -142,12 +149,14 @@ return [
             'unique' => 'Darbuotojas su tokiu el. pašto adresu jau egzistuoja.',
             'min' => 'El. pašto lauke minimalus kiekis simbolių yra 3.',
             'max' => 'El. pašto lauke maksimalus kiekis simbolių yra 255.',
+            'string' => 'El. pašto laukas privalo būti tekstinis.',
         ],
         'web_url' => [
             'required' => 'Svetainės adreso laukas yra privalomas.',
             'url' => 'Svetainės adreso formatas netinkamas.',
             'min' => 'Svetainės adreso lauke minimalus kiekis simbolių yra 3.',
             'max' => 'Svetainės adreso lauke maksimalus kiekis simbolių yra 255.',
+            'string' => 'Svetainės adreso laukas privalo būti tekstinis.',
         ],
         'logo' => [
             'mimes' => 'Logotipas privalo būti vieno iš šių failų tipų: jpeg, jpg, png, bmp.',
